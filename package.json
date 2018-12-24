@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@vue/ui": "^0.5.6",
+    "axios": "^0.18.0",
     "element-ui": "^2.4.11",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <el-row>
-      <el-col :xs="24" :sm="{offset:6,span:12}">
+      <el-col :xs="24" :sm="{offset:4,span:16}">
         <el-input v-model="input" placeholder="今天做点什么？" @keyup.enter.native="add"></el-input>
         <ul v-if="list.length>0">
           <li v-for="item in filteredTodos" class="todo">
@@ -64,10 +64,13 @@
         filter: 'all',
       }
     },
+    created(){
+      this.getTodos()
+    },
     methods: {
-      ...mapActions(['addItem', 'toggleItem', 'removeDoneItem']),
+      ...mapActions(['getTodos','removeTodo','addItem', 'toggleItem', 'removeDoneItem']),
       removeItem(item) {
-        this.$store.commit('REMOVE_ITEM', item)
+        this.removeTodo(item)
       },
       add() {
         if (this.input.trim()) {
