@@ -9,19 +9,21 @@ export default new Vuex.Store({
     list: []
   },
   mutations: {
-    REMOVE_ITEM(state, item) {
-      state.list.splice(state.list.indexOf(item), 1)
+    REMOVE_TODO(state, todo) {
+      state.list.splice(state.list.indexOf(todo), 1)
     },
-    ADD_ITEM(state, item) {
-      state.list.push(item)
+    ADD_TODO(state, todo) {
+      state.list.push(todo)
     },
-    EDIT_ITEM(state, {
-      item,
-      text = item.text,
-      done = item.done
+    EDIT_TODO(state, {
+      todo,
+      text = todo.text,
+      done = todo.done
     }) {
-      item.text = text
-      item.done = done
+      console.log(todo);
+
+      todo.text = text
+      todo.done = done
     },
     SET_TODOS(state, todos) {
       state.list = todos
@@ -31,47 +33,49 @@ export default new Vuex.Store({
     getTodos({
       commit
     }) {
-      axios.get('api/todos').then(res => {
+      axios.get('todos').then(res => {
         console.log(res);
-        commit('SET_TODOS', res.data)
+        let todos = res.data.data
+        commit('SET_TODOS', todos.data)
       }).catch(err => {
         console.log(err);
       })
     },
-    addItem({
+    addTodo({
       commit
     }, text) {
-      axios.post('api/todos', {
+      axios.post('todos', {
         text: text,
         done: false
       }).then(res => {
-        var todo = res.data
-        commit('ADD_ITEM', {
-          text: todo.text,
-          done: todo.done
-        })
+        var todo = res.data.data
+        console.log(res);
+        
+        commit('ADD_TODO', todo)
       }).catch(err => {
         console.log(err);
       })
     },
     removeTodo({
       commit
-    }, item) {
-      axios.delete('api/todos/' + item.id).then(res => {
-        commit('REMOVE_ITEM', item)
+    }, todo) {
+      axios.delete('todos/' + todo.id).then(res => {
+        commit('REMOVE_TODO', todo)
       }).catch(err => {
         console.log(err);
       })
     },
-    toggleItem({
+    toggleTodo({
       commit
-    }, item) {
-      axios.put('api/todos/' + item.id, {
-        done: item.done
+    }, todo) {
+      axios.put('todos/' + todo.id, {
+        done: todo.done
       }).then(res => {
         console.log(res);
-        var todo = res.data
-        commit('EDIT_ITEM', {
+        var todo = res.data.data
+        console.log(todo);
+
+        commit('EDIT_TODO', {
           todo,
           done: todo.done
         })
@@ -79,18 +83,18 @@ export default new Vuex.Store({
         console.log(err);
       })
     },
-    removeDoneItem({
+    removeDoneTodo({
       state,
       commit
     }) {
-      var doneTodos = state.list.filter(item => item.done)
-      var doneIds = doneTodos.map(item => item.id)
+      var doneTodos = state.list.filter(todo => todo.done)
+      var doneIds = doneTodos.map(todo => todo.id)
 
-      axios.post('api/todos/delete', {
+      axios.post('todos/delete', {
         ids: doneIds
       }).then(res => {
-        doneIds.forEach(item => {
-          commit('REMOVE_ITEM', item)
+        doneIds.forEach(todo => {
+          commit('REMOVE_TODO', todo)
         })
       }).catch(err => {
         console.log(err);
